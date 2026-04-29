@@ -12,7 +12,7 @@ def create_trade_stream():
         "?streams=btcusdt@trade/ethusdt@trade"
     )
     ws = WebsocketClient(url, on_message=None)
-    monitor = LatencyMonitor('/app/data/latencies.csv')
+    monitor = LatencyMonitor('/app/data/latenciesBuffer.csv')
     protocol = BinanceProtocol()
     producer = KafkaProducerWrapper(KAFKA_BROKER)
 
