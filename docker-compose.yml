@@ -27,3 +27,5 @@ services:
       - broker
     environment:
       KAFKA_BROKER: broker:9092
+    volumes:
+      - ./data:/app/data

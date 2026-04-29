@@ -11,8 +11,8 @@ class WebsocketClient:
         while True:
             try:
                 async with websockets.connect(self.url, ping_interval=20) as ws:
-                    msg = await ws.recv()
-                    await self.on_message(msg)
+                    async for msg in ws:
+                        await self.on_message(msg)
 
             except Exception as e:
                 print(f"[WS ERROR] {e}")
