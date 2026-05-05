@@ -44,7 +44,6 @@ class BaseStream:
             if payload is None:
                 time.sleep(0.0001)
                 continue
-            print(payload)
             self.producer.send(self.topic, payload['payload'])
             t_sent = time.time_ns()
 
