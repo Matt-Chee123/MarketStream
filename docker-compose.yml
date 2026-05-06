@@ -52,6 +52,16 @@ services:
     environment:
       KAFKA_BROKER: broker:9092
     restart: on-failure
+  feature_processor:
+    build:
+      context: .
+      dockerfile: consumers/feature_processor/Dockerfile
+    container_name: feature-processor
+    depends_on:
+      - broker
+    environment:
+      KAFKA_BROKER: broker:9092
+    restart: on-failure
 
 volumes:
   producer_data:

@@ -65,7 +65,6 @@ def main():
         try:
             while True:
                 for trade in consumer.poll():
-                    print(trade)
                     buffer.add(parse_trade(trade))
 
                 if buffer.should_flush():
