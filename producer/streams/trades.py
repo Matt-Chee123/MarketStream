@@ -9,7 +9,11 @@ def create_trade_stream():
     KAFKA_BROKER = os.getenv("KAFKA_BROKER", "localhost:9092")
     url = (
         "wss://stream.binance.com:9443/stream"
-        "?streams=btcusdt@trade/ethusdt@trade"
+        "?streams=btcusdt@trade"
+        "/ethusdt@trade"
+        "/solusdt@trade"
+        "/bnbusdt@trade"
+        "/xrpusdt@trade"
     )
     ws = WebsocketClient(url, on_message=None)
     monitor = LatencyMonitor('/app/data/latenciesBuffer.csv')

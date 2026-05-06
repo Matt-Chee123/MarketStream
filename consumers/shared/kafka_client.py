@@ -34,10 +34,6 @@ class KafkaConsumerWrapper:
         records = self.consumer.poll(timeout_ms=timeout_ms)
         out = []
         for tp_record in records.values():
-            print("xxxxxxxxxxxxxxxxxxxxxxxxx")
-            print(tp_record)
             for record in tp_record:
-                print("xxxxxxxxxxxxxxxxx")
-                print(record)
                 out.append(record.value)
         return out

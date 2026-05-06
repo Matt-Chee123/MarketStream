@@ -6,9 +6,20 @@ from datetime import datetime, timezone
 import psycopg
 
 
-INSERT_SQL = """
-    INSERT INTO trades (time, symbol, trade_id, price, quantity, is_buyer_maker)
-    VALUES (%s, %s, %s, %s, %s, %s)
+CREATE_TMP_SQL = """
+    CREATE TEMP TABLE IF NOT EXISTS tmp_trades (
+        LIKE trades INCLUDING DEFAULTS
+    ) ON COMMIT DELETE ROWS
+"""
+
+COPY_SQL = """
+    COPY tmp_trades (time, symbol, trade_id, price, quantity, is_buyer_maker)
+    FROM STDIN
+"""
+
+MERGE_SQL = """
+    INSERT INTO trades
+    SELECT * FROM tmp_trades
     ON CONFLICT DO NOTHING
 """
 
@@ -22,6 +33,17 @@ def parse_trade(msg):
         msg["is_buyer_maker"],
     )
 
+def flush(cur, conn, consumer, rows):
+    if not rows:
+        return 0
+    with cur.copy(COPY_SQL) as copy:
+        for row in rows:
+            copy.write_row(row)
+    cur.execute(MERGE_SQL)
+    conn.commit()
+    consumer.commit()
+    return len(rows)
+
 def main():
     KAFKA_BROKER = os.getenv("KAFKA_BROKER", "localhost:9092")
     DB_DSN = os.getenv("DB_DSN", "postgres://postgres:postgres@db:5432/mydb")
@@ -34,6 +56,10 @@ def main():
     )
     buffer = BatchBuffer(1000, 1.0)
 
+    with conn.cursor() as cur:
+        cur.execute(CREATE_TMP_SQL)
+        conn.commit()
+
     print("Listening for trades...")
     with conn.cursor() as cur:
         try:
@@ -45,10 +71,7 @@ def main():
                 if buffer.should_flush():
                     trades = buffer.drain()
                     if trades:
-                        print(trades)
-                        cur.executemany(INSERT_SQL, trades)
-                        conn.commit()
-                        consumer.commit()
+                        flush(cur, conn, consumer, trades)
 
         except Exception as e:
             print(f"Shutting down: {e}")
