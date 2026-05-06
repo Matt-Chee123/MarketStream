@@ -1,6 +1,7 @@
 import os
 import sys
 from shared.kafka_client import KafkaConsumerWrapper
+from batch_buffer import BatchBuffer
 from datetime import datetime, timezone
 import psycopg
 
@@ -31,13 +32,26 @@ def main():
         topics="market.trades",
         group_id="persister"
     )
+    buffer = BatchBuffer(1000, 1.0)
+
     print("Listening for trades...")
     with conn.cursor() as cur:
-        for trade in consumer.messages():
-            cur.execute(INSERT_SQL, parse_trade(trade))
-            conn.commit()
-            consumer.commit()
-            print(trade)
+        try:
+            while True:
+                for trade in consumer.poll():
+                    print(trade)
+                    buffer.add(parse_trade(trade))
+
+                if buffer.should_flush():
+                    trades = buffer.drain()
+                    if trades:
+                        print(trades)
+                        cur.executemany(INSERT_SQL, trades)
+                        conn.commit()
+                        consumer.commit()
+
+        except Exception as e:
+            print(f"Shutting down: {e}")
 
 
 if __name__ == "__main__":

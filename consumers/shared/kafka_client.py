@@ -29,3 +29,15 @@ class KafkaConsumerWrapper:
 
     def close(self):
         self.consumer.close()
+
+    def poll(self, timeout_ms=200):
+        records = self.consumer.poll(timeout_ms=timeout_ms)
+        out = []
+        for tp_record in records.values():
+            print("xxxxxxxxxxxxxxxxxxxxxxxxx")
+            print(tp_record)
+            for record in tp_record:
+                print("xxxxxxxxxxxxxxxxx")
+                print(record)
+                out.append(record.value)
+        return out

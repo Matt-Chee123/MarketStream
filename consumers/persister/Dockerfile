@@ -6,6 +6,6 @@ COPY consumers/persister/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY consumers/shared /app/shared
-COPY consumers/persister/main.py /app/main.py
+COPY consumers/persister/. /app/.
 
 CMD ["python", "-u", "main.py"]
