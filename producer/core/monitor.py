@@ -13,7 +13,6 @@ class LatencyMonitor:
         ])
 
     def write_row(self, t_binance_ms, t_received_ns, t_sent_ns):
-        print("Write Row: ", t_binance_ms, t_received_ns, t_sent_ns)
         self._writer.writerow([t_binance_ms, t_received_ns, t_sent_ns])
 
     def close(self):
