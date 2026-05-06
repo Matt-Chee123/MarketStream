@@ -15,7 +15,9 @@ class BinanceProtocol(BaseProtocol):
 
         return {
             "symbol": data["s"],
+            "trade_id": data["t"],
             "price": float(data["p"]),
             "quantity": float(data["q"]),
-            "timestamp": data["E"],
+            "timestamp": data["T"],
+            "is_buyer_maker": data["m"]
         }
