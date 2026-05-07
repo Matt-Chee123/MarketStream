@@ -103,9 +103,11 @@ services:
         - broker
       environment:
         KAFKA_BROKER: broker:9092
-        TARGET_RATE: "10000"
+        TARGET_RATE: "30000"
         DURATION_S: "300"
-
+      deploy:
+        replicas: 4
+        
 volumes:
   producer_data:
   timescale_data:
