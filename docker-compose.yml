@@ -80,7 +80,20 @@ services:
     environment:
       KAFKA_BROKER: broker:9092
     restart: on-failure
-
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SCHEMA_VERSION=v1
+    restart: on-failure
 
 volumes:
   producer_data:
