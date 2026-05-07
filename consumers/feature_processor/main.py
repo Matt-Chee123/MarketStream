@@ -5,6 +5,7 @@ from shared.kafka_client import KafkaConsumerWrapper
 import redis
 import json
 from collections import defaultdict
+import time
 
 WINDOW_LENGTHS_MS = [60_000, 300_000]
 INPUT_TOPIC = "market.trades"
@@ -29,6 +30,9 @@ def main():
 
     print("Computing features...")
     count = 0
+    total = 0
+    last_report = time.perf_counter()
+    report_interval = 5.0
     try:
         for trade in consumer.messages():
             features.update(
@@ -55,6 +59,13 @@ def main():
                 consumer.commit()
                 print(f"Processed {count} trades")
 
+            total += 1
+            now = time.perf_counter()
+            if now - last_report >= report_interval:
+                rate = total / (now - last_report)
+                print(f"total={total}  rate={rate:,.0f}/s  features_emitted={count}")
+                total = 0
+                last_report = now
 
     except KeyboardInterrupt:
         print("Shutting down...")
