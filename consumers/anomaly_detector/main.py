@@ -16,7 +16,7 @@ def main():
     consumer = KafkaConsumerWrapper(
         broker=KAFKA_BROKER,
         topics=INPUT_TOPIC,
-        group_id="feature-processor",
+        group_id="anomaly-detector",
     )
     producer = KafkaProducerWrapper(KAFKA_BROKER)
     features = SymbolFeatures(WINDOW_LENGTHS_MS)
