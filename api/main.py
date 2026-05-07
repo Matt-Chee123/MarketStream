@@ -18,3 +18,11 @@ def health():
         return {"status": "ok"}
     except redis.RedisError:
         raise HTTPException(503, "redis unavailable")
+
+@app.get("/features/{symbol}")
+def get_features(symbol, window=60, version=DEFAULT_VERSION):
+    key = f"feat:{symbol.upper()}:{window}s:{version}"
+    raw = r.get(key)
+    if raw is None:
+        raise HTTPException(404, f"no features for {symbol} window={window}s version={version}")
+    return json.loads(raw)

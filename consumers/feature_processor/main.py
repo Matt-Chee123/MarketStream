@@ -38,7 +38,7 @@ def main():
             for record in features.snapshot(trade["symbol"], trade["timestamp"]):
                 producer.send(OUTPUT_TOPIC, key=record["symbol"], message=record)
                 key = f"feat:{record['symbol']}:{record['window_seconds']}s:{SCHEMA_VERSION}"
-                print(key, record)
+                print(key)
                 r.set(key, json.dumps(record, default=str))
 
             count += 1
