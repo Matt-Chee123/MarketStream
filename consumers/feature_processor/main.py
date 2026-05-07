@@ -31,7 +31,6 @@ def main():
                 trade["quantity"],
             )
             for record in features.snapshot(trade["symbol"], trade["timestamp"]):
-                print(record)
                 producer.send(OUTPUT_TOPIC, key=record["symbol"], message=record)
 
             count += 1

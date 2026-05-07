@@ -12,6 +12,13 @@ class RollingWindow:
         while self.trades and self.trades[0][0] < cutoff:
             self.trades.popleft()
 
+    def zscore(self, price, min_samples=30):
+        s = self.stats()
+        if s is None or s['count'] < min_samples or s['std_price'] == 0:
+            return None
+        return (price - s['mean_price']) / s['std_price']
+
+
     def stats(self):
         if not self.trades:
             return None
