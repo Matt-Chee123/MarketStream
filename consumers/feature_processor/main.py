@@ -1,7 +1,6 @@
 import os
 from shared.kafka_producer import KafkaProducerWrapper
-from windows import SymbolFeatures
-
+from shared.windows import SymbolFeatures
 from shared.kafka_client import KafkaConsumerWrapper
 
 
@@ -32,6 +31,7 @@ def main():
                 trade["quantity"],
             )
             for record in features.snapshot(trade["symbol"], trade["timestamp"]):
+                print(record)
                 producer.send(OUTPUT_TOPIC, key=record["symbol"], message=record)
 
             count += 1

@@ -20,3 +20,6 @@ class KafkaProducerWrapper:
 
     def send(self, topic, key, message):
         self.producer.send(topic, key=key.encode() if isinstance(key, str) else key, value=message)
+
+    def flush(self, timeout=None):
+        self.producer.flush(timeout=timeout)
