@@ -94,6 +94,17 @@ services:
       - REDIS_PORT=6379
       - SCHEMA_VERSION=v1
     restart: on-failure
+  synthetic_producer:
+      build:
+        context: .
+        dockerfile: consumers/synthetic_producer/Dockerfile
+      profiles: ["loadtest"]
+      depends_on:
+        - broker
+      environment:
+        KAFKA_BROKER: broker:9092
+        TARGET_RATE: "10000"
+        DURATION_S: "300"
 
 volumes:
   producer_data:

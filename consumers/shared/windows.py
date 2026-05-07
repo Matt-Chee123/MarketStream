@@ -37,6 +37,7 @@ class RollingWindow:
             "last_price": prices[-1],
             "min_price": min(prices),
             "max_price": max(prices),
+            "price_range": max(prices) - min(prices)
         }
 
 class SymbolFeatures:
