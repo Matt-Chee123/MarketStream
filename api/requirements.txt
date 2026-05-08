@@ -4,3 +4,4 @@ websockets
 redis
 kafka-python==2.3.1
 orjson==3.11.8
+asyncpg
